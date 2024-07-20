@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Embarques</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <script>
+        // Verificar autenticação antes de carregar a página
+        if (!localStorage.getItem('authenticated')) {
+            window.location.href = 'login.html';
+        } else {
+            localStorage.removeItem('authenticated'); // Logout após acessar a página
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+        .btn-custom:hover {
+            background-color: white;
+            color: black;
+            border: 2px solid #007bff;
+        }
+        .nav-link-custom {
+            background-color: #28a745;
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 2px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+        .nav-link-custom:hover {
+            background-color: #218838;
+            color: white !important;
+        }
+        .card-custom {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .centered-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: 50%;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="text-center mb-4">
+            <a class="nav-link nav-link-custom" href="#" onclick="openPage('Registro', this)" id="defaultOpen">Registro</a>
+            <a class="nav-link nav-link-custom" href="analysis.html">Dashboard</a>
+        </div>
+        <h1 class="text-center mb-4">Controle de Embarques Ferroviário</h1>
+        <div id="Registro" class="tabcontent my-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card p-4 shadow-lg card-custom">
+                        <form id="carregamentoForm">
+                            <div class="form-group">
+                                <label for="data">Data de Carregamento:</label>
+                                <input type="date" class="form-control" id="data" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="composicao">Composição:</label>
+                                <input type="text" class="form-control" id="composicao" required autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="vagoes">Número de Vagões:</label>
+                                <input type="number" class="form-control" id="vagoes" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="destino">Destino:</label>
+                                <select class="form-control" id="destino" required>
+                                    <option value="TPSL">TPSL</option>
+                                    <option value="TG ALZ">TG ALZ</option>
+                                    <option value="TG TCN">TG TCN</option>
+                                    <option value="TG VITERRA">TG VITERRA</option>
+                                    <option value="TG CLI">TG CLI</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="filial">Filial:</label>
+                                <select class="form-control" id="filial" required>
+                                    <option value="C036">C036</option>
+                                    <option value="C043">C043</option>
+                                    <option value="C056">C056</option>
+                                    <option value="C059">C059</option>
+                                    <option value="C071">C071</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="volume">Volume Carregado (toneladas):</label>
+                                <input type="text" class="form-control" id="volume" required autocomplete="off">
+                            </div>
+                            <button type="submit" class="nav-link-custom btn-block">Registrar Carregamento</button>
+                        </form>
+                        <div id="message" class="alert alert-success centered-message" style="display: none;">Carregamento registrado com sucesso!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('carregamentoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = document.getElementById('data').value;
+            const composicao = document.getElementById('composicao').value.toUpperCase();
+            const vagoes = document.getElementById('vagoes').value;
+            const destino = document.getElementById('destino').value;
+            const filial = document.getElementById('filial').value;
+            const volume = document.getElementById('volume').value.replace(/\D/g, '');
+
+            if (!data || !composicao || !vagoes || !destino || !filial || !volume) {
+                alert('Todos os campos são obrigatórios!');
+                return;
+            }
+
+            const carregamento = {
+                data: data,
+                composicao: composicao,
+                vagoes: parseInt(vagoes),
+                destino: destino,
+                filial: filial,
+                volume: parseFloat(volume)
+            };
+
+            fetch('/carregamentos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(carregamento)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('carregamentoForm').reset();
+                    const message = document.getElementById('message');
+                    message.textContent = 'Carregamento registrado com sucesso!';
+                    message.style.display = 'block';
+
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 3000);
+                } else {
+                    alert('Erro ao registrar o carregamento.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao registrar o carregamento.');
+            });
+        });
+
+        function openPage(pageName, elmnt) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("nav-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(pageName).style.display = "block";
+            elmnt.className += " active";
+        }
+
+        // Defina a aba padrão aberta
+        document.getElementById("defaultOpen").click();
+
+        // Função para formatar o campo de volume com pontos e adicionar 'kg'
+        document.getElementById('volume').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove qualquer caractere não numérico
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos
+            e.target.value = value + ' kg';
+        });
+
+        // Função para forçar o campo composição a ficar em caixa alta
+        document.getElementById('composicao').addEventListener('input', function (e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

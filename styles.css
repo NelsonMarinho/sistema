@@ -1,0 +1,86 @@
+/* Estilo global */
+body {
+    background-color: #f8f9fa; /* Fundo suave */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Estilo do cartão de formulário */
+.card {
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+/* Estilo da mensagem de erro */
+#loginMessage, #registerMessage, #message {
+    display: none;
+    text-align: center;
+}
+
+/* Estilo do botão */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Estilo do botão de cadastro */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Estilo dos campos de entrada com erro */
+.is-invalid {
+    border-color: #dc3545;
+}
+
+.is-invalid + .invalid-feedback {
+    display: block;
+}
+
+/* Centralização do container */
+.container {
+    margin-top: 50px;
+}
+
+/* Estilo do título principal */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #0066cc; /* Primária */
+}
+
+/* Estilo dos rótulos do formulário */
+.form-group label {
+    font-weight: bold;
+    color: #333333; /* Texto */
+}
+
+/* Estilo dos alertas de sucesso */
+.alert-success {
+    text-align: center;
+    font-weight: bold;
+    background-color: #28a745; /* Sucesso */
+    border-color: #28a745;
+}
+
+/* Estilo das abas */
+.nav-tabs .nav-link.active {
+    background-color: #3399ff !important; /* Secundária */
+    color: #ffffff !important; /* Texto */
+}
+
+/* Estilo do conteúdo das abas */
+.tabcontent {
+    display: none;
+    padding: 20px;
+}
